@@ -7,7 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -16,33 +15,23 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadFileController {
 
     @Autowired
-    private final UploadFileServiceImpl uploadFileService;
+    private final UploadFileService uploadFileService;
 
-    public UploadFileController(UploadFileServiceImpl uploadFileService) {
+    public UploadFileController(UploadFileService uploadFileService) {
         this.uploadFileService = uploadFileService;
-    }
-
-    @Value("${custom.apps}")
-    String value;
-
-    @GetMapping("/get")
-    public String newController() {
-        System.out.println(value);
-        return "Hello!";
     }
 
 
     @PostMapping("/in/{appName}/{accountId}")
     public ResponseEntity<UploadFileResponse> uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("appName") String appName,
-            @RequestParam("accountId") Integer accountId
+            @PathVariable @Value("${custom.apps}") String appName,
+            @PathVariable Integer accountId
     ) {
-        System.out.println(value);
+        System.out.println(appName);
 
         String message = "";
         try {
-            appName = value;
             uploadFileService.save(file, appName, accountId);
 
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
